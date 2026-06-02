@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/lib/constants";
-import { ShieldCheck, Github, Twitter, Linkedin } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 export function Footer() {
   return (
@@ -16,17 +16,8 @@ export function Footer() {
               {SITE_DESCRIPTION}
             </p>
             <div className="flex items-center gap-4">
-              <a href="https://github.com/anuragverma4895" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
-                <Github className="w-5 h-5" />
-                <span className="sr-only">GitHub</span>
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="w-5 h-5" />
-                <span className="sr-only">Twitter</span>
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Linkedin className="w-5 h-5" />
-                <span className="sr-only">LinkedIn</span>
+              <a href="https://github.com/anuragverma4895" target="_blank" rel="noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                GitHub
               </a>
             </div>
           </div>
