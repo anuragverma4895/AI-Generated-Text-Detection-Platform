@@ -4,7 +4,7 @@ import { useState } from "react";
 import { analyzeText, type AnalysisResult } from "@/lib/detection";
 import { 
   FileText, Upload, Link as LinkIcon, Loader2, ScanLine, 
-  ShieldAlert, HelpCircle, CheckCircle2, Download
+  Download
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -36,13 +36,6 @@ export default function Dashboard() {
     if (prob > 30) return "text-yellow-500";
     return "text-emerald-500";
   };
-  const getVerdictBg = (prob: number) => {
-    if (prob > 75) return "bg-red-500";
-    if (prob > 50) return "bg-amber-500";
-    if (prob > 30) return "bg-yellow-500";
-    return "bg-emerald-500";
-  };
-
   return (
     <div className="section-container py-12 flex-1">
       <div className="mb-8">

@@ -10,7 +10,7 @@ export default function PricingPage() {
           Plans for everyone
         </h1>
         <p className="text-lg text-muted-foreground">
-          Whether you're a student checking your essays, a teacher reviewing submissions, or an enterprise integrating detection into your workflow.
+          Whether you are a student checking your essays, a teacher reviewing submissions, or an enterprise integrating detection into your workflow.
         </p>
       </div>
       
@@ -23,7 +23,7 @@ export default function PricingPage() {
           <div className="space-y-4">
             {[
               { q: "How accurate is the AI detection?", a: "Our ELECTRA-based model achieves over 98% accuracy on standard benchmarks. However, AI detection is probabilistic. We recommend using the tool as a strong signal rather than absolute proof." },
-              { q: "Can I cancel my subscription anytime?", a: "Yes, you can cancel your Pro or Enterprise subscription at any time from your account dashboard. You'll retain access until the end of your billing cycle." },
+              { q: "Can I cancel my subscription anytime?", a: "Yes, you can cancel your Pro or Enterprise subscription at any time from your account dashboard. You will retain access until the end of your billing cycle." },
               { q: "Do you store the text I analyze?", a: "For Free and Pro users, text is processed securely in memory and never stored. Enterprise users have the option to opt-in to secure private data storage for organizational compliance." },
               { q: "What languages are supported?", a: "The detection model is natively trained on English, but we use a Google Translate pipeline to automatically translate and analyze content in over 100 languages with high accuracy." }
             ].map((faq, idx) => (

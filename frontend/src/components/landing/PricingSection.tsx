@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PRICING_PLANS } from "@/lib/constants";
-import { Check, X } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -41,7 +41,7 @@ export function PricingSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {PRICING_PLANS.map((plan, idx) => (
+          {PRICING_PLANS.map((plan) => (
             <div
               key={plan.name}
               className={cn(

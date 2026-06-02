@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Settings, CreditCard, Key, Activity, LogOut } from "lucide-react";
+import { Settings, CreditCard, Key, Activity, LogOut } from "lucide-react";
 
 export default function UserDashboardPage() {
   return (

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { analyzeText, type AnalysisResult } from "@/lib/detection";
-import { Loader2, ArrowRight, ShieldAlert, CheckCircle2, HelpCircle } from "lucide-react";
+import { Loader2, ArrowRight, ShieldAlert, CheckCircle2, HelpCircle, ScanLine } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function LiveDemo() {

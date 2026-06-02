@@ -1,6 +1,6 @@
 "use client";
 
-import { Book, Code, Terminal } from "lucide-react";
+import { Book, Code, ShieldAlert } from "lucide-react";
 
 export default function ApiDocsPage() {
   return (
@@ -90,6 +90,3 @@ export default function ApiDocsPage() {
     </div>
   );
 }
-
-// Dummy import to satisfy JSX
-import { ShieldAlert } from "lucide-react";

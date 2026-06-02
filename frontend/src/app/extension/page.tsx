@@ -1,9 +1,7 @@
 "use client";
 
-import { Download, Chrome, Shield, Zap, Search, Eye } from "lucide-react";
-import Image from "next/image";
+import { Download, Globe, Shield, Zap, Search, Eye } from "lucide-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 
 export default function ExtensionPage() {
   return (
@@ -15,7 +13,7 @@ export default function ExtensionPage() {
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 text-center md:text-left">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-glass-bg border border-glass-border mb-6">
-                <Chrome className="w-4 h-4 text-blue-400" />
+                <Globe className="w-4 h-4 text-blue-400" />
                 <span className="text-sm font-medium text-muted-foreground">Chrome & Edge Extension</span>
               </div>
               <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
@@ -84,7 +82,7 @@ export default function ExtensionPage() {
                 <Search className="w-5 h-5" />
               </div>
               <h3 className="text-lg font-bold mb-2">Context Menu Scan</h3>
-              <p className="text-sm text-muted-foreground">Highlight any text, right-click, and select "Check if AI-generated" for instant analysis without leaving the page.</p>
+              <p className="text-sm text-muted-foreground">Highlight any text, right-click, and select &quot;Check if AI-generated&quot; for instant analysis without leaving the page.</p>
             </div>
             
             <div className="glass-card p-6">
