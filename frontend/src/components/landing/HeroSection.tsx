@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Download, ScanLine } from "lucide-react";
+import { ArrowRight, Download, ScanLine, ShieldCheck } from "lucide-react";
 
 export function HeroSection() {
   return (
