@@ -3,6 +3,8 @@
 import { Download, Globe, Shield, Zap, Search, Eye } from "lucide-react";
 import Link from "next/link";
 
+const projectZipUrl = "https://github.com/anuragverma4895/AI-Generated-Text-Detection-Platform/archive/refs/heads/main.zip";
+
 export default function ExtensionPage() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -23,7 +25,7 @@ export default function ExtensionPage() {
                 Install the TruthLens AI extension to scan webpages, emails, and social media directly in your browser. Real-time analysis with a single click.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <a href="https://github.com/anuragverma4895/AI-generated-text-detection" target="_blank" rel="noreferrer" className="btn-primary py-3 px-8 text-base justify-center">
+                <a href={projectZipUrl} download className="btn-primary py-3 px-8 text-base justify-center">
                   <Download className="w-5 h-5" /> Download for Chrome
                 </a>
                 <Link href="/dashboard" className="btn-secondary py-3 px-8 text-base justify-center">
@@ -115,7 +117,7 @@ export default function ExtensionPage() {
               <div>
                 <h4 className="text-lg font-semibold mb-2">Download the Repository</h4>
                 <p className="text-sm text-muted-foreground mb-4">Get the source code directly from our GitHub repository.</p>
-                <code className="text-xs bg-background p-3 rounded-lg border border-border/50 block w-full overflow-x-auto text-emerald-400">git clone https://github.com/anuragverma4895/AI-generated-text-detection.git</code>
+                <code className="text-xs bg-background p-3 rounded-lg border border-border/50 block w-full overflow-x-auto text-emerald-400">git clone https://github.com/anuragverma4895/AI-Generated-Text-Detection-Platform.git</code>
               </div>
             </div>
             
