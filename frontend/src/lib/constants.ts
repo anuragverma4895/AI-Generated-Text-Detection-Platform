@@ -7,6 +7,8 @@ export const HF_API_URL =
   "https://dipaghosh56-electra-ai-vs-human.hf.space/api/predict";
 export const TRANSLATE_API =
   "https://translate.googleapis.com/translate_a/single";
+export const EXTENSION_REPO_ZIP_URL =
+  "https://github.com/anuragverma4895/AI-generated-text-detection/archive/refs/heads/main.zip";
 
 export const NAV_LINKS = [
   { label: "Features", href: "/#features" },

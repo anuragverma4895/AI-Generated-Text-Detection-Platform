@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Download, ScanLine, ShieldCheck } from "lucide-react";
+import { EXTENSION_REPO_ZIP_URL } from "@/lib/constants";
 
 export function HeroSection() {
   return (
@@ -51,10 +52,10 @@ export function HeroSection() {
             <ScanLine className="w-5 h-5" />
             Start Free Analysis
           </Link>
-          <Link href="/extension" className="btn-secondary w-full sm:w-auto text-base py-3 px-8">
+          <a href={EXTENSION_REPO_ZIP_URL} download className="btn-secondary w-full sm:w-auto text-base py-3 px-8">
             <Download className="w-5 h-5" />
             Download Extension
-          </Link>
+          </a>
         </motion.div>
 
         {/* Visual Mockup */}
