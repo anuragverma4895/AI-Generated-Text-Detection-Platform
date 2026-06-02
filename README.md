@@ -1,70 +1,52 @@
 # TruthLens AI
 
-TruthLens AI is a production-grade SaaS platform for advanced AI-generated content detection. It evolved from the open-source Chrome Extension to provide enterprise-grade reporting, API access, and comprehensive writing metrics.
+TruthLens AI is a free AI-generated text detection platform with a Next.js frontend and a FastAPI backend. The frontend calls its own Next API proxy, and the proxy connects to the backend service, so the browser never needs to know the private backend address on Render.
 
-## Architecture
+## Structure
 
-```mermaid
-graph TD
-    A[Client Browser] -->|Next.js App Router| B(Frontend: Next.js 15)
-    B -->|REST API| C(Backend: FastAPI)
-    C -->|Store Data| D[(PostgreSQL Database)]
-    C -->|Detect AI| E[HuggingFace ELECTRA Model]
-    C -->|Translate| F[Google Translate API]
+```text
+.
+├── backend/        # FastAPI detection API
+├── frontend/       # Next.js app and API proxy
+├── render.yaml     # Render Blueprint for both services
+└── .env.example    # Local development env template
 ```
 
-## Features
+## Local Development
 
-- **Advanced AI Detection**: Deep sequence analysis using the ELECTRA neural network.
-- **Sentence-Level Highlighting**: See exactly which sentences trigger the AI detectors with precise color-coding.
-- **Multi-Language Support**: Built-in translation pipeline automatically processes non-English text.
-- **Developer API**: Integrate TruthLens AI detection directly into your applications.
-- **Historical Tracking**: Save, view, and export past analysis reports.
-- **Browser Extension Integration**: Companion extension for checking content on the fly.
+Backend:
 
-## Tech Stack
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
 
-- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS, ShadCN UI, Framer Motion
-- **Backend**: Python 3.11, FastAPI, SQLAlchemy, Pydantic
-- **Database**: PostgreSQL
-- **Deployment**: Docker, Docker Compose, GitHub Actions
+Frontend:
 
-## Quick Start (Local Development)
-
-### Prerequisites
-- Node.js 18+
-- Python 3.11+
-- Docker & Docker Compose (Optional but recommended)
-
-### Running with Docker (Recommended)
-
-1. Clone the repository
-2. Copy the example environment file: `cp .env.example .env`
-3. Start the services:
-   ```bash
-   docker-compose up --build
-   ```
-4. Access the frontend at `http://localhost:3000`
-5. Access the API documentation at `http://localhost:8000/docs`
-
-### Running Manually
-
-**Terminal 1: Frontend**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-**Terminal 2: Backend**
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
+Set local environment variables from `.env.example` when needed. Do not commit real `.env` files.
 
-## Deployment
+## Render Deployment
 
-The project includes a GitHub Actions workflow `.github/workflows/deploy.yml` and Dockerfiles for production deployment. We recommend deploying the frontend to Vercel and the backend/database to a platform like Render or Railway.
+This repo is ready for Render Blueprint deployment.
+
+1. Push this repository to GitHub.
+2. In Render, create a new Blueprint from the repository.
+3. Render will read `render.yaml` from the repo root.
+4. Enter `HF_TOKEN` when Render prompts for it.
+5. Click deploy.
+
+The Blueprint creates:
+
+- `truthlens-ai-backend`: FastAPI service with `/health` and `/api/v1/detection/detect`.
+- `truthlens-ai-frontend`: Next.js service that proxies detection requests to the backend over Render private networking.
+
+Only `HF_TOKEN` is required during deployment.
