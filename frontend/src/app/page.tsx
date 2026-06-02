@@ -1,7 +1,7 @@
 import { HeroSection } from "@/components/landing/HeroSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { LiveDemo } from "@/components/landing/LiveDemo";
-import { PricingSection } from "@/components/landing/PricingSection";
+import { FreePlatformSection } from "@/components/landing/FreePlatformSection";
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
       <HeroSection />
       <FeaturesSection />
       <LiveDemo />
-      <PricingSection />
+      <FreePlatformSection />
     </div>
   );
 }

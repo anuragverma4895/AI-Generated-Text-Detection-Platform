@@ -62,7 +62,7 @@ export default function ExtensionPage() {
                        <div className="text-[10px] text-muted-foreground uppercase font-bold">AI Probability</div>
                      </div>
                      <div className="p-2 bg-background/50 text-center">
-                       <span className="text-[10px] text-red-500 font-bold bg-red-500/10 px-2 py-0.5 rounded">🤖 Likely AI</span>
+                       <span className="text-[10px] text-red-500 font-bold bg-red-500/10 px-2 py-0.5 rounded">Likely AI</span>
                      </div>
                    </div>
                  </div>

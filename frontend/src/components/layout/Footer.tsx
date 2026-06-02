@@ -15,45 +15,57 @@ export function Footer() {
             <p className="text-sm text-muted-foreground leading-relaxed mb-6">
               {SITE_DESCRIPTION}
             </p>
-            <div className="flex items-center gap-4">
-              <a href="https://github.com/anuragverma4895" target="_blank" rel="noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                GitHub
-              </a>
-            </div>
+            <a
+              href="https://github.com/anuragverma4895"
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              GitHub
+            </a>
           </div>
 
           <div>
             <h3 className="font-semibold mb-4">Product</h3>
             <ul className="space-y-3">
-              <li><Link href="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-colors">Detection Dashboard</Link></li>
+              <li><Link href="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-colors">Free Detector</Link></li>
+              <li><Link href="/#demo" className="text-sm text-muted-foreground hover:text-primary transition-colors">Live Demo</Link></li>
               <li><Link href="/extension" className="text-sm text-muted-foreground hover:text-primary transition-colors">Browser Extension</Link></li>
               <li><Link href="/api-docs" className="text-sm text-muted-foreground hover:text-primary transition-colors">API Platform</Link></li>
-              <li><Link href="/pricing" className="text-sm text-muted-foreground hover:text-primary transition-colors">Pricing</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="font-semibold mb-4">Resources</h3>
             <ul className="space-y-3">
+              <li><Link href="/#features" className="text-sm text-muted-foreground hover:text-primary transition-colors">Features</Link></li>
               <li><Link href="/reports" className="text-sm text-muted-foreground hover:text-primary transition-colors">Sample Reports</Link></li>
-              <li><Link href="/docs" className="text-sm text-muted-foreground hover:text-primary transition-colors">Documentation</Link></li>
-              <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
-              <li><Link href="/faq" className="text-sm text-muted-foreground hover:text-primary transition-colors">Help Center & FAQ</Link></li>
+              <li><Link href="/#extension" className="text-sm text-muted-foreground hover:text-primary transition-colors">Free Extension</Link></li>
+              <li><Link href="/#api" className="text-sm text-muted-foreground hover:text-primary transition-colors">API Docs</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-semibold mb-4">Legal</h3>
+            <h3 className="font-semibold mb-4">Access</h3>
             <ul className="space-y-3">
-              <li><Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link></li>
-              <li><Link href="/cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">Cookie Policy</Link></li>
+              <li><Link href="/dashboard" className="text-sm text-muted-foreground hover:text-primary transition-colors">Start Free Analysis</Link></li>
+              <li><Link href="/#free-platform" className="text-sm text-muted-foreground hover:text-primary transition-colors">Free Platform</Link></li>
+              <li>
+                <a
+                  href="https://github.com/anuragverma4895"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  GitHub Profile
+                </a>
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-border/40 text-center text-sm text-muted-foreground flex flex-col md:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} {SITE_NAME}. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {SITE_NAME}. Free to use.</p>
           <p>Powered by ELECTRA Deep Learning Model</p>
         </div>
       </div>

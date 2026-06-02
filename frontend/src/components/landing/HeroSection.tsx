@@ -40,6 +40,7 @@ export function HeroSection() {
           className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           Advanced AI-powered authenticity analysis with detailed confidence scoring, sentence-level highlighting, and enterprise-grade reporting.
+          Free to use from the first scan.
         </motion.p>
 
         <motion.div
@@ -103,7 +104,7 @@ export function HeroSection() {
                      </div>
                    </div>
                    <div className="text-sm font-medium text-red-500 bg-red-500/10 px-3 py-1 rounded-full flex items-center gap-1.5">
-                     🤖 Likely AI
+                     Likely AI
                    </div>
                 </div>
               </div>
