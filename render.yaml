@@ -1,13 +1,17 @@
 services:
+  # ── Backend (FastAPI + Uvicorn) ─────────────────────────────
   - type: web
     name: truthlens-ai-backend
     runtime: python
     rootDir: backend
     plan: free
+    region: oregon
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.12"
       - key: HF_TOKEN
         sync: false
       - key: HF_API_URL
@@ -15,17 +19,19 @@ services:
       - key: TRANSLATE_API_URL
         value: https://translate.googleapis.com/translate_a/single
 
+  # ── Frontend (Next.js) ──────────────────────────────────────
   - type: web
     name: truthlens-ai-frontend
     runtime: node
     rootDir: frontend
     plan: free
+    region: oregon
     buildCommand: npm ci && npm run build
-    startCommand: npm run start -- -p $PORT
+    startCommand: npm run start -- --port $PORT
     healthCheckPath: /
     envVars:
       - key: NODE_VERSION
-        value: 20
+        value: "20"
       - key: BACKEND_HOSTPORT
         fromService:
           name: truthlens-ai-backend
