@@ -40,6 +40,7 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000 &\n\
 echo "Starting Next.js Frontend..."\n\
 cd /app/frontend\n\
 export BACKEND_API_URL=http://127.0.0.1:8000/api/v1\n\
+export HOSTNAME=0.0.0.0\n\
 # Render injects $PORT. Next.js standalone server respects it.\n\
 exec node server.js\n\
 ' > start.sh && chmod +x start.sh
