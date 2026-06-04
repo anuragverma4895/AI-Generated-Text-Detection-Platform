@@ -54,7 +54,7 @@ export function FreePlatformSection() {
             const Icon = tool.icon;
             const cardContent = (
               <>
-                <div className="w-12 h-12 rounded-xl bg-background border border-border/50 flex items-center justify-center mb-6">
+                <div className="icon-cube mb-6">
                   <Icon className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold mb-3">{tool.title}</h3>
@@ -73,7 +73,7 @@ export function FreePlatformSection() {
                 id={tool.id}
                 href={tool.href}
                 download
-                className="glass-card p-8 flex flex-col scroll-mt-28"
+                className="depth-card tilt-card flex flex-col p-8 scroll-mt-28"
               >
                 {cardContent}
               </a>
@@ -82,7 +82,7 @@ export function FreePlatformSection() {
                 key={tool.id}
                 id={tool.id}
                 href={tool.href}
-                className="glass-card p-8 flex flex-col scroll-mt-28"
+                className="depth-card tilt-card flex flex-col p-8 scroll-mt-28"
               >
                 {cardContent}
               </Link>

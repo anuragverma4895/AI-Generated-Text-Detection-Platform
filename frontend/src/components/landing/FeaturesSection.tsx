@@ -76,8 +76,8 @@ export function FeaturesSection() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {features.map((feature, idx) => (
-            <motion.div key={idx} variants={itemVariants} className="glass-card p-8 group">
-              <div className="w-12 h-12 rounded-xl bg-background border border-border/50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+            <motion.div key={idx} variants={itemVariants} className="depth-card tilt-card group p-8">
+              <div className="icon-cube mb-6">
                 {feature.icon}
               </div>
               <h3 className="text-xl font-bold mb-3">{feature.title}</h3>

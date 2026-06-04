@@ -51,7 +51,7 @@ export function LiveDemo() {
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto glass-card p-6 md:p-8 relative">
+        <div className="depth-card mx-auto max-w-4xl p-6 md:p-8 relative">
           <div className="flex flex-col md:flex-row gap-8">
             {/* Input Area */}
             <div className="flex-1 flex flex-col gap-4">
@@ -60,7 +60,7 @@ export function LiveDemo() {
               </label>
               <textarea
                 id="demo-input"
-                className="w-full h-64 bg-background/50 border border-border/50 rounded-xl p-4 resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-sm leading-relaxed"
+                className="w-full h-64 resize-none rounded-xl border border-cyan-300/10 bg-slate-950/70 p-4 text-sm leading-relaxed shadow-inner shadow-black/40 transition-all focus:border-cyan-300/40 focus:outline-none focus:ring-2 focus:ring-cyan-300/20"
                 placeholder="Paste an essay, article, or any text here..."
                 value={text}
                 onChange={(e) => setText(e.target.value)}
@@ -72,7 +72,7 @@ export function LiveDemo() {
                 <button
                   onClick={handleAnalyze}
                   disabled={isAnalyzing || text.trim().length < 150}
-                  className="btn-primary py-2 px-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary depth-button py-2 px-6 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isAnalyzing ? (
                     <>

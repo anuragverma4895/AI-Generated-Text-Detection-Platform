@@ -2,42 +2,42 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Download, ScanLine, ShieldCheck } from "lucide-react";
+import { Download, ScanLine, ShieldCheck, Sparkles } from "lucide-react";
 import { EXTENSION_REPO_ZIP_URL } from "@/lib/constants";
+import { Hero3DScene } from "./Hero3DScene";
 
 export function HeroSection() {
   return (
-    <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-      {/* Background Orbs */}
-      <div className="glow-orb w-[500px] h-[500px] bg-primary/20 top-0 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="glow-orb w-[400px] h-[400px] bg-secondary/20 bottom-0 right-0 translate-x-1/3 translate-y-1/3"></div>
+    <section className="hero-shell relative overflow-hidden">
+      <Hero3DScene />
+      <div className="hero-depth-layer"></div>
 
-      <div className="section-container relative z-10 text-center">
+      <div className="section-container relative z-10 grid min-h-[calc(100vh-5rem)] items-center gap-12 py-16 lg:grid-cols-[0.95fr_1.05fr] lg:py-20">
+        <div className="text-center lg:text-left">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-glass-bg border border-glass-border backdrop-blur-md mb-8"
+          className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-cyan-100 shadow-[0_14px_40px_rgba(34,211,238,0.12)] backdrop-blur-md mb-8"
         >
-          <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-sm font-medium text-muted-foreground">TruthLens AI v2.0 is now live</span>
+          <Sparkles className="h-4 w-4 text-cyan-300" />
+          <span className="text-sm font-semibold">TruthLens AI v2.0 is now live</span>
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6"
+          className="mb-6 text-5xl font-black leading-[0.98] md:text-7xl"
         >
-          Know Whether Content Was <br className="hidden md:block" />
-          <span className="gradient-text">Written by AI or Humans</span>
+          Detect AI Text With a <span className="gradient-text">3D Neural Lens</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl lg:mx-0"
         >
           Advanced AI-powered authenticity analysis with detailed confidence scoring, sentence-level highlighting, and enterprise-grade reporting.
           Free to use from the first scan.
@@ -47,29 +47,27 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start"
         >
-          <Link href="/dashboard" className="btn-primary w-full sm:w-auto text-base py-3 px-8">
+          <Link href="/dashboard" className="btn-primary depth-button w-full sm:w-auto text-base py-3 px-8">
             <ScanLine className="w-5 h-5" />
             Start Free Analysis
           </Link>
-          <a href={EXTENSION_REPO_ZIP_URL} download className="btn-secondary w-full sm:w-auto text-base py-3 px-8">
+          <a href={EXTENSION_REPO_ZIP_URL} download className="btn-secondary depth-button w-full sm:w-auto text-base py-3 px-8">
             <Download className="w-5 h-5" />
             Download Extension
           </a>
         </motion.div>
+        </div>
 
-        {/* Visual Mockup */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="mt-20 relative mx-auto max-w-4xl animate-float"
+          className="hero-console mx-auto w-full max-w-2xl lg:max-w-none"
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10 top-1/2"></div>
-          <div className="glass-card p-2 md:p-4 border-t border-l border-white/10 rounded-2xl md:rounded-[32px] overflow-hidden shadow-2xl">
-            <div className="bg-bg-secondary rounded-xl md:rounded-[24px] border border-border/50 overflow-hidden relative">
-              {/* Mockup Header */}
+          <div className="depth-card p-2 md:p-4">
+            <div className="relative overflow-hidden rounded-xl border border-white/10 bg-slate-950/80 md:rounded-[24px]">
               <div className="h-10 border-b border-border/50 flex items-center px-4 gap-2 bg-background/50">
                 <div className="flex gap-1.5">
                   <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
@@ -80,17 +78,17 @@ export function HeroSection() {
                   <ShieldCheck className="w-3 h-3 text-primary" /> truthlens.ai/dashboard
                 </div>
               </div>
-              {/* Mockup Body */}
-              <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 relative">
+              <div className="absolute inset-x-8 top-16 h-px bg-gradient-to-r from-transparent via-cyan-300/80 to-transparent shadow-[0_0_24px_rgba(34,211,238,0.9)]"></div>
+              <div className="relative flex flex-col gap-6 p-6 md:flex-row md:p-8">
                 <div className="flex-1 space-y-4">
-                  <div className="h-4 bg-muted/20 rounded w-3/4"></div>
-                  <div className="h-4 bg-muted/20 rounded w-full"></div>
-                  <div className="h-4 bg-primary/20 rounded w-5/6 relative overflow-hidden">
-                     <div className="absolute inset-0 bg-primary/30 w-1/2 animate-pulse"></div>
+                  <div className="h-4 bg-white/[0.12] rounded w-3/4"></div>
+                  <div className="h-4 bg-white/10 rounded w-full"></div>
+                  <div className="h-4 bg-cyan-400/20 rounded w-5/6 relative overflow-hidden">
+                     <div className="absolute inset-y-0 left-0 w-1/2 animate-pulse bg-cyan-300/35"></div>
                   </div>
-                  <div className="h-4 bg-muted/20 rounded w-full"></div>
-                  <div className="h-4 bg-muted/20 rounded w-4/5"></div>
-                  <div className="h-4 bg-primary/20 rounded w-2/3"></div>
+                  <div className="h-4 bg-white/10 rounded w-full"></div>
+                  <div className="h-4 bg-white/10 rounded w-4/5"></div>
+                  <div className="h-4 bg-rose-400/20 rounded w-2/3"></div>
                 </div>
                 <div className="w-full md:w-48 flex-shrink-0 flex flex-col items-center justify-center border-l border-border/50 pl-6 gap-4">
                    <div className="relative w-32 h-32 flex items-center justify-center">
@@ -103,7 +101,7 @@ export function HeroSection() {
                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">AI Score</div>
                      </div>
                    </div>
-                   <div className="text-sm font-medium text-red-500 bg-red-500/10 px-3 py-1 rounded-full flex items-center gap-1.5">
+                   <div className="flex items-center gap-1.5 rounded-full bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-300 ring-1 ring-red-400/20">
                      Likely AI
                    </div>
                 </div>
