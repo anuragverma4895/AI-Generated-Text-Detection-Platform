@@ -2,7 +2,7 @@
 
 import { Download, Globe, Shield, Zap, Search, Eye } from "lucide-react";
 import Link from "next/link";
-import { EXTENSION_REPO_ZIP_URL } from "@/lib/constants";
+import { EXTENSION_DOWNLOAD_URL } from "@/lib/constants";
 
 export default function ExtensionPage() {
   return (
@@ -24,7 +24,7 @@ export default function ExtensionPage() {
                 Install the TruthLens AI extension to scan webpages, emails, and social media directly in your browser. Real-time analysis with a single click.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <a href={EXTENSION_REPO_ZIP_URL} download className="btn-primary py-3 px-8 text-base justify-center">
+                <a href={EXTENSION_DOWNLOAD_URL} download className="btn-primary py-3 px-8 text-base justify-center">
                   <Download className="w-5 h-5" /> Download for Chrome
                 </a>
                 <Link href="/dashboard" className="btn-secondary py-3 px-8 text-base justify-center">

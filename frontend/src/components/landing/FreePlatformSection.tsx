@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Code2, Download, ScanLine, ShieldCheck } from "lucide-react";
-import { EXTENSION_REPO_ZIP_URL } from "@/lib/constants";
+import { EXTENSION_DOWNLOAD_URL } from "@/lib/constants";
 
 const freeTools = [
   {
@@ -20,7 +20,7 @@ const freeTools = [
     description:
       "Install the Chromium extension and scan selected text or full webpages directly in your browser.",
     action: "Download Extension",
-    href: EXTENSION_REPO_ZIP_URL,
+    href: EXTENSION_DOWNLOAD_URL,
     download: true,
   },
   {

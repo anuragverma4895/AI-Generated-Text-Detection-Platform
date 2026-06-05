@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { analyzeText, type AnalysisResult } from "@/lib/detection";
+import { saveReport, type SavedReport } from "@/lib/report-store";
 import { 
   FileText, Upload, Link as LinkIcon, Loader2, ScanLine, 
   Download
@@ -11,23 +12,79 @@ import { cn } from "@/lib/utils";
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<"text" | "file" | "url">("text");
   const [text, setText] = useState("");
+  const [url, setUrl] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isFetchingUrl, setIsFetchingUrl] = useState(false);
   const [progressText, setProgressText] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [currentReport, setCurrentReport] = useState<SavedReport | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAnalyze = async () => {
     if (text.trim().length < 150) return;
     setIsAnalyzing(true);
     setResult(null);
+    setCurrentReport(null);
     try {
       const res = await analyzeText(text, (msg) => setProgressText(msg));
       setResult(res);
+      if (!res.error) {
+        const report = saveReport(res, text, activeTab === "url" ? url : "Pasted Text");
+        setCurrentReport(report);
+      }
     } catch (error) {
       console.error(error);
     } finally {
       setIsAnalyzing(false);
       setProgressText("");
     }
+  };
+
+  const handleUrlScan = async () => {
+    if (!url.trim()) return;
+    setIsFetchingUrl(true);
+    setProgressText("Fetching URL content...");
+    try {
+      const res = await fetch("/api/fetch-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to fetch URL");
+      setText(data.text);
+      setActiveTab("text");
+      setProgressText("URL content extracted successfully.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      alert("Error fetching URL: " + message);
+    } finally {
+      setIsFetchingUrl(false);
+      setTimeout(() => setProgressText(""), 3000);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File too large. Max 5MB allowed.");
+      return;
+    }
+
+    try {
+      const content = await file.text();
+      setText(content);
+      setActiveTab("text");
+    } catch (error) {
+      alert("Error reading file.");
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleExportPdf = () => {
+    window.print();
   };
 
   const getVerdictColor = (prob: number) => {
@@ -95,12 +152,41 @@ export default function Dashboard() {
                   </div>
                 </div>
               )}
-              {activeTab !== "text" && (
+              {activeTab === "file" && (
                 <div className="h-80 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl">
                   <Upload className="w-10 h-10 text-muted-foreground mb-4" />
                   <p className="text-sm text-muted-foreground mb-2">Drag and drop a file here, or click to browse</p>
-                  <p className="text-xs text-muted-foreground mb-4">Supports PDF, DOCX, TXT (Max 25MB)</p>
-                  <button className="btn-secondary text-xs py-2">Select File</button>
+                  <p className="text-xs text-muted-foreground mb-4">Supports TXT (Max 5MB)</p>
+                  <input
+                    type="file"
+                    accept=".txt"
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <button onClick={() => fileInputRef.current?.click()} className="btn-secondary text-xs py-2">Select File</button>
+                </div>
+              )}
+              {activeTab === "url" && (
+                <div className="h-80 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl p-8">
+                  <LinkIcon className="w-10 h-10 text-muted-foreground mb-4" />
+                  <p className="text-sm text-muted-foreground mb-6 text-center">Enter a webpage URL to extract and analyze its text content.</p>
+                  <div className="w-full max-w-md flex flex-col gap-4">
+                    <input
+                      type="url"
+                      placeholder="https://example.com/article"
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      className="w-full bg-background border border-border rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                    <button
+                      onClick={handleUrlScan}
+                      disabled={isFetchingUrl || !url.trim()}
+                      className="btn-primary justify-center"
+                    >
+                      {isFetchingUrl ? <Loader2 className="w-4 h-4 animate-spin" /> : "Fetch & Analyze"}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -202,7 +288,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 
-                <button className="btn-secondary w-full mt-8 text-sm">
+                <button onClick={handleExportPdf} className="btn-secondary w-full mt-8 text-sm">
                   <Download className="w-4 h-4" /> Export Report (PDF)
                 </button>
               </div>

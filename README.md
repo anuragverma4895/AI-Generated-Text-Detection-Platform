@@ -1,73 +1,107 @@
-# TruthLens AI
+# TruthLens AI — Enterprise-Grade AI Text Detection
 
-TruthLens AI is a free AI-generated text detection platform with a Next.js frontend and a FastAPI backend. The frontend calls its own Next API proxy (`/api/detect`), which internally reaches the backend over Render's private network — the browser never touches the backend directly.
+![TruthLens AI](https://img.shields.io/badge/TruthLens-AI-blueviolet?style=for-the-badge)
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=FastAPI&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
-## Structure
+TruthLens AI is an advanced, high-precision content authenticity platform designed to detect AI-generated text. Powered by an ELECTRA deep learning model, it offers accurate sentence-level analysis, multi-language support with automatic translation, and detailed reporting.
 
-```text
-.
-├── backend/        # FastAPI detection API (Python 3.11)
-├── frontend/       # Next.js app with API proxy route
-├── render.yaml     # Render Blueprint — deploys both services
-├── docker-compose.yml  # Local Docker setup (optional)
-└── .env.example    # Local development env template
+---
+
+## 🚀 Features
+
+- **High Precision Detection:** Utilizes ELECTRA-based models fine-tuned on diverse AI text sources.
+- **Detailed Sentence Analysis:** Highlights exactly which sentences are most likely AI-generated.
+- **Dashboard Tools:** Paste text, upload documents (TXT), or scan URLs directly from the dashboard.
+- **Reporting & Export:** Maintain a local history of your scans and export them as PDF, JSON, or CSV.
+- **API Access:** Integrate the detection engine directly into your own applications.
+- **Browser Extension:** Scan webpages in real-time with the included Chrome/Edge extension.
+
+---
+
+## 🧩 Browser Extension
+
+The project includes a full-featured browser extension that lets you scan any webpage or selected text instantly.
+
+### Quick Install
+
+1. Download the extension ZIP by clicking the **Download Extension** button on the TruthLens website.
+2. Unzip the downloaded folder.
+3. Open your browser's extension page (`chrome://extensions/` for Chrome/Edge/Brave).
+4. Enable **Developer Mode** (usually a toggle in the top-right corner).
+5. Click **"Load unpacked"** and select the unzipped folder.
+
+*Now you can scan any webpage by clicking the extension icon or highlighting text and right-clicking!*
+
+---
+
+## 🛠 Tech Stack
+
+- **Frontend:** Next.js 14, React, Tailwind CSS, Framer Motion
+- **Backend:** FastAPI, Python, HuggingFace Inference API, Google Translate (async)
+- **Deployment:** Vercel (Frontend), Render/Railway (Backend)
+
+---
+
+## 📖 API Usage
+
+The detection engine is accessible via REST API. 
+
+**Endpoint:** `POST /api/v1/detection/detect`
+
+**Example Request:**
+```bash
+curl -X POST https://your-backend-url/api/v1/detection/detect \
+  -H "Content-Type: application/json" \
+  -d '{"text": "The rapid advancement of artificial intelligence has revolutionized many industries."}'
 ```
 
-## Local Development
+**Example Response:**
+```json
+{
+  "probability": 85.5,
+  "label": "Likely AI-Generated",
+  "segments": 1,
+  "segmentDetails": [ ... ],
+  "sentenceDetails": [ ... ]
+}
+```
 
-**Backend:**
+---
 
+## 💻 Local Development
+
+### Prerequisites
+- Node.js (v18+)
+- Python (3.9+)
+- HuggingFace API Token (`HF_TOKEN`)
+
+### 1. Start Backend
 ```bash
 cd backend
 python -m venv venv
-venv\Scripts\activate        # Windows
-# source venv/bin/activate   # macOS / Linux
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+
+# Add your HF_TOKEN to a .env file
+echo "HF_TOKEN=your_token_here" > .env
+
+uvicorn main:app --reload
 ```
 
-**Frontend:**
-
+### 2. Start Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Copy `.env.example` to `.env` in the project root and fill in your `HF_TOKEN`. Do **not** commit real `.env` files.
+Visit `http://localhost:3000` to see the application.
 
-## Render Deployment
+---
 
-This repo uses **Render Blueprints** (Infrastructure-as-Code via `render.yaml`).
+## 📝 License
 
-### Steps
-
-1. Push this repository to GitHub.
-2. Go to [Render Dashboard → New → Blueprint](https://dashboard.render.com/select-repo?type=blueprint).
-3. Select this repository — Render auto-detects `render.yaml`.
-4. Set `HF_TOKEN` when prompted (your HuggingFace API token).
-5. Click **Apply** → both services deploy automatically.
-
-### What Gets Created
-
-| Service | Type | URL |
-|---------|------|-----|
-| `truthlens-ai-backend` | Web Service (Python) | `https://truthlens-ai-backend.onrender.com` |
-| `truthlens-ai-frontend` | Web Service (Node) | `https://truthlens-ai-frontend.onrender.com` |
-
-### How They Connect
-
-- Frontend → Backend communication happens over **Render's private network** using the `BACKEND_HOSTPORT` env var (auto-injected by Render).
-- The frontend's API route (`/api/detect`) proxies requests to the backend at `http://<BACKEND_HOSTPORT>/api/v1/detection/detect`.
-- No CORS issues since the proxy runs server-side.
-
-### Environment Variables
-
-| Variable | Service | Required | Description |
-|----------|---------|----------|-------------|
-| `HF_TOKEN` | Backend | ✅ Yes | HuggingFace API token |
-| `HF_API_URL` | Backend | No (has default) | HF model endpoint |
-| `TRANSLATE_API_URL` | Backend | No (has default) | Google Translate endpoint |
-| `BACKEND_HOSTPORT` | Frontend | Auto-injected | Render fills this from backend service |
-
-Only `HF_TOKEN` needs to be set manually during deployment.
+This project is licensed under the MIT License.

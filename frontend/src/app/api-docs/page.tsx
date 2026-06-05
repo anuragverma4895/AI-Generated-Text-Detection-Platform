@@ -61,6 +61,13 @@ export default function ApiDocsPage() {
               <div className="p-6">
                 <p className="text-sm text-muted-foreground mb-4">Analyze text for AI generation probability.</p>
                 <h4 className="font-semibold text-sm mb-2">Request Body (JSON)</h4>
+                <div className="space-y-4 mb-8">
+                  <div className="p-4 border border-border rounded-lg bg-background/50">
+                    <div className="font-mono text-sm text-primary mb-1">text <span className="text-muted-foreground text-xs">(string)</span></div>
+                    <p className="text-sm text-muted-foreground">The text you want to analyze. Minimum length is 150 characters.</p>
+                  </div>
+                </div>
+
                 <pre className="bg-background border border-border/50 rounded-lg p-4 font-mono text-sm overflow-x-auto mb-6 text-gray-300">
 {`{
   "text": "The quick brown fox jumps over the lazy dog."
@@ -70,17 +77,49 @@ export default function ApiDocsPage() {
                 <h4 className="font-semibold text-sm mb-2">Response (200 OK)</h4>
                 <pre className="bg-background border border-border/50 rounded-lg p-4 font-mono text-sm overflow-x-auto text-gray-300">
 {`{
-  "probability": 12.5,
-  "label": "Likely Human-Written",
-  "segments_analyzed": 1,
-  "sentences": [
+  "probability": 85.5,
+  "label": "Likely AI-Generated",
+  "segments": 3,
+  "segmentDetails": [
     {
-      "text": "The quick brown fox jumps over the lazy dog.",
-      "probability": 12.5
+      "text": "The rapid advancement of artificial intelligence has revolutionized...",
+      "probability": 92.1,
+      "label": "AI-Generated"
+    }
+  ],
+  "sentenceDetails": [
+    {
+      "text": "The rapid advancement of artificial intelligence has revolutionized...",
+      "probability": 92.1,
+      "label": "AI-Generated"
     }
   ]
 }`}
                 </pre>
+                
+                <h4 className="font-semibold text-sm mt-8 mb-2">Response Parameters</h4>
+                <div className="space-y-4">
+                  <div className="p-4 border border-border rounded-lg bg-background/50">
+                    <div className="font-mono text-sm text-primary mb-1">probability <span className="text-muted-foreground text-xs">(number)</span></div>
+                    <p className="text-sm text-muted-foreground">The overall confidence score (0-100) that the text is AI-generated.</p>
+                  </div>
+                  <div className="p-4 border border-border rounded-lg bg-background/50">
+                    <div className="font-mono text-sm text-primary mb-1">label <span className="text-muted-foreground text-xs">(string)</span></div>
+                    <p className="text-sm text-muted-foreground">The human-readable classification (e.g., "Human-Written", "Likely AI-Generated").</p>
+                  </div>
+                  <div className="p-4 border border-border rounded-lg bg-background/50">
+                    <div className="font-mono text-sm text-primary mb-1">segments <span className="text-muted-foreground text-xs">(number)</span></div>
+                    <p className="text-sm text-muted-foreground">The number of chunks the input text was divided into for analysis.</p>
+                  </div>
+                  <div className="p-4 border border-border rounded-lg bg-background/50">
+                    <div className="font-mono text-sm text-primary mb-1">segmentDetails <span className="text-muted-foreground text-xs">(array)</span></div>
+                    <p className="text-sm text-muted-foreground">Detailed analysis for each segment.</p>
+                  </div>
+                  <div className="p-4 border border-border rounded-lg bg-background/50">
+                    <div className="font-mono text-sm text-primary mb-1">sentenceDetails <span className="text-muted-foreground text-xs">(array)</span></div>
+                    <p className="text-sm text-muted-foreground">Detailed analysis for each sentence, including its individual probability score.</p>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
