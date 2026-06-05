@@ -15,6 +15,7 @@ export default function Dashboard() {
   const [url, setUrl] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isFetchingUrl, setIsFetchingUrl] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [progressText, setProgressText] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [currentReport, setCurrentReport] = useState<SavedReport | null>(null);
@@ -68,19 +69,37 @@ export default function Dashboard() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      alert("File too large. Max 5MB allowed.");
+    if (file.size > 25 * 1024 * 1024) {
+      alert("File too large. Max 25MB allowed.");
       return;
     }
 
+    setIsUploading(true);
+    setProgressText(`Extracting text from ${file.name}...`);
+
     try {
-      const content = await file.text();
-      setText(content);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/extract-text", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to extract text");
+
+      setText(data.text);
       setActiveTab("text");
+      setProgressText("File content extracted successfully.");
     } catch (error) {
-      alert("Error reading file.");
+      const message = error instanceof Error ? error.message : "Error reading file.";
+      alert("Error parsing file: " + message);
+    } finally {
+      setIsUploading(false);
+      setTimeout(() => setProgressText(""), 3000);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleExportPdf = () => {
@@ -154,17 +173,29 @@ export default function Dashboard() {
               )}
               {activeTab === "file" && (
                 <div className="h-80 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-xl">
-                  <Upload className="w-10 h-10 text-muted-foreground mb-4" />
-                  <p className="text-sm text-muted-foreground mb-2">Drag and drop a file here, or click to browse</p>
-                  <p className="text-xs text-muted-foreground mb-4">Supports TXT (Max 5MB)</p>
+                  {isUploading ? (
+                    <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
+                  ) : (
+                    <Upload className="w-10 h-10 text-muted-foreground mb-4" />
+                  )}
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {isUploading ? "Extracting text..." : "Drag and drop a file here, or click to browse"}
+                  </p>
+                  <p className="text-xs text-muted-foreground mb-4">Supports PDF, DOCX, TXT (Max 25MB)</p>
                   <input
                     type="file"
-                    accept=".txt"
+                    accept=".txt,.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
                     ref={fileInputRef}
                     onChange={handleFileUpload}
                     className="hidden"
                   />
-                  <button onClick={() => fileInputRef.current?.click()} className="btn-secondary text-xs py-2">Select File</button>
+                  <button 
+                    onClick={() => fileInputRef.current?.click()} 
+                    disabled={isUploading}
+                    className="btn-secondary text-xs py-2"
+                  >
+                    Select File
+                  </button>
                 </div>
               )}
               {activeTab === "url" && (
