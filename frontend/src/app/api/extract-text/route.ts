@@ -1,8 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import mammoth from "mammoth";
+import { PDFParse } from "pdf-parse";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+async function extractPdfText(buffer: Buffer) {
+  const parser = new PDFParse({ data: buffer });
+
+  try {
+    const result = await parser.getText();
+    return result.text;
+  } finally {
+    await parser.destroy();
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,11 +36,15 @@ export async function POST(request: NextRequest) {
       text = buffer.toString("utf-8");
     } else if (fileName.endsWith(".pdf") || mimeType === "application/pdf") {
       try {
-        const pdfParse = require("pdf-parse");
-        const pdfData = await pdfParse(buffer);
-        text = pdfData.text;
+        text = await extractPdfText(buffer);
       } catch (err) {
-        throw new Error("Failed to parse PDF document. It might be corrupted or encrypted.");
+        const message = err instanceof Error ? err.message : "";
+
+        if (message.toLowerCase().includes("password")) {
+          throw new Error("This PDF is password protected. Please upload an unlocked PDF, DOCX, or TXT file.");
+        }
+
+        throw new Error("Failed to read text from this PDF. Please try a text-based PDF, DOCX, or TXT file.");
       }
     } else if (
       fileName.endsWith(".docx") ||
