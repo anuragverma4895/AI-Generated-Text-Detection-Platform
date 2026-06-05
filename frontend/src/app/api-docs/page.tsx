@@ -105,7 +105,7 @@ export default function ApiDocsPage() {
                   </div>
                   <div className="p-4 border border-border rounded-lg bg-background/50">
                     <div className="font-mono text-sm text-primary mb-1">label <span className="text-muted-foreground text-xs">(string)</span></div>
-                    <p className="text-sm text-muted-foreground">The human-readable classification (e.g., "Human-Written", "Likely AI-Generated").</p>
+                    <p className="text-sm text-muted-foreground">The human-readable classification (e.g., &quot;Human-Written&quot;, &quot;Likely AI-Generated&quot;).</p>
                   </div>
                   <div className="p-4 border border-border rounded-lg bg-background/50">
                     <div className="font-mono text-sm text-primary mb-1">segments <span className="text-muted-foreground text-xs">(number)</span></div>

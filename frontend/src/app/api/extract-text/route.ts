@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import mammoth from "mammoth";
-import { PDFParse } from "pdf-parse";
-
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 async function extractPdfText(buffer: Buffer) {
+  const { PDFParse } = await import("pdf-parse");
   const parser = new PDFParse({ data: buffer });
 
   try {
@@ -15,6 +13,12 @@ async function extractPdfText(buffer: Buffer) {
   } finally {
     await parser.destroy();
   }
+}
+
+async function extractDocxText(buffer: Buffer) {
+  const mammoth = await import("mammoth");
+  const result = await mammoth.extractRawText({ buffer });
+  return result.value;
 }
 
 export async function POST(request: NextRequest) {
@@ -51,9 +55,8 @@ export async function POST(request: NextRequest) {
       mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     ) {
       try {
-        const result = await mammoth.extractRawText({ buffer });
-        text = result.value;
-      } catch (err) {
+        text = await extractDocxText(buffer);
+      } catch {
         throw new Error("Failed to parse DOCX document.");
       }
     } else {

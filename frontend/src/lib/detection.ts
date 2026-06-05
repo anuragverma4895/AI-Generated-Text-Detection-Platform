@@ -31,6 +31,19 @@ export interface AnalysisResult {
 
 export type ProgressCallback = (message: string, progress: number) => void;
 
+async function readApiResponse(response: Response) {
+  const contentType = response.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    return response.json();
+  }
+
+  const text = await response.text();
+  return {
+    detail: text.trim() || `Detection request failed with status ${response.status}`,
+  };
+}
+
 async function detectWithBackend(text: string): Promise<AnalysisResult> {
   const response = await fetch("/api/detect", {
     method: "POST",
@@ -38,7 +51,7 @@ async function detectWithBackend(text: string): Promise<AnalysisResult> {
     body: JSON.stringify({ text }),
   });
 
-  const data = await response.json();
+  const data = await readApiResponse(response);
 
   if (!response.ok) {
     const detail = typeof data?.detail === "string" ? data.detail : "Detection request failed";

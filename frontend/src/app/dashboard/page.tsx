@@ -2,12 +2,25 @@
 
 import { useState, useRef } from "react";
 import { analyzeText, type AnalysisResult } from "@/lib/detection";
-import { saveReport, type SavedReport } from "@/lib/report-store";
+import { saveReport } from "@/lib/report-store";
 import { 
   FileText, Upload, Link as LinkIcon, Loader2, ScanLine, 
   Download
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+async function readApiResponse(response: Response) {
+  const contentType = response.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    return response.json();
+  }
+
+  const text = await response.text();
+  return {
+    error: text.trim() || `Request failed with status ${response.status}`,
+  };
+}
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<"text" | "file" | "url">("text");
@@ -18,20 +31,17 @@ export default function Dashboard() {
   const [isUploading, setIsUploading] = useState(false);
   const [progressText, setProgressText] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [currentReport, setCurrentReport] = useState<SavedReport | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAnalyze = async () => {
     if (text.trim().length < 150) return;
     setIsAnalyzing(true);
     setResult(null);
-    setCurrentReport(null);
     try {
       const res = await analyzeText(text, (msg) => setProgressText(msg));
       setResult(res);
       if (!res.error) {
-        const report = saveReport(res, text, activeTab === "url" ? url : "Pasted Text");
-        setCurrentReport(report);
+        saveReport(res, text, activeTab === "url" ? url : "Pasted Text");
       }
     } catch (error) {
       console.error(error);
@@ -51,7 +61,7 @@ export default function Dashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
       });
-      const data = await res.json();
+      const data = await readApiResponse(res);
       if (!res.ok) throw new Error(data.error || "Failed to fetch URL");
       setText(data.text);
       setActiveTab("text");
@@ -86,7 +96,7 @@ export default function Dashboard() {
         body: formData,
       });
 
-      const data = await res.json();
+      const data = await readApiResponse(res);
       if (!res.ok) throw new Error(data.error || "Failed to extract text");
 
       setText(data.text);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Download, FileText, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -12,12 +12,8 @@ import {
 } from "@/lib/report-store";
 
 export default function ReportsPage() {
-  const [reports, setReports] = useState<SavedReport[]>([]);
+  const [reports, setReports] = useState<SavedReport[]>(() => getReports());
   const [search, setSearch] = useState("");
-
-  useEffect(() => {
-    setReports(getReports());
-  }, []);
 
   const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to delete this report?")) {
