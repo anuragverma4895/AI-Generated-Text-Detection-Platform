@@ -19,7 +19,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/82 backdrop-blur-2xl">
-      <div className="section-container flex h-16 items-center justify-between gap-6">
+      <div className="section-container flex h-16 items-center justify-between gap-5">
         <Link href="/" className="flex min-w-fit items-center gap-3 group" onClick={() => setMobileMenuOpen(false)}>
           <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-300/20 bg-white/[0.07] text-cyan-100 shadow-sm transition-colors group-hover:border-cyan-300/45 group-hover:bg-cyan-300/10">
             <ShieldCheck className="h-5 w-5" />
@@ -29,14 +29,14 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden min-w-0 items-center gap-4 lg:flex">
-          <ul className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1">
+        <nav className="hidden min-w-0 items-center gap-5 lg:flex">
+          <ul className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.035] p-1">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
                   className={cn(
-                    "block rounded-full px-3 py-2 text-sm font-semibold text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white",
+                    "block rounded-full px-3.5 py-2 text-sm font-semibold text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white",
                     isActiveLink(link.href) && "bg-white/[0.12] text-white"
                   )}
                 >
@@ -50,12 +50,8 @@ export function Navbar() {
           </Link>
         </nav>
 
-        <Link href="/dashboard" className="btn-primary ml-auto hidden px-4 py-2 text-sm md:inline-flex lg:hidden">
-          Free Detector
-        </Link>
-
         <button
-          className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-200 transition-colors hover:bg-white/10 lg:hidden"
+          className="ml-auto inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-200 transition-colors hover:bg-white/10 lg:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
