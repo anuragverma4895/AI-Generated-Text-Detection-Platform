@@ -353,7 +353,7 @@ export default function Dashboard() {
                 </div>
                 
                 <button onClick={handleExportPdf} disabled={!currentReport} className="btn-secondary w-full mt-8 text-sm">
-                  <Download className="w-4 h-4" /> Export Report (PDF)
+                  <Download className="w-4 h-4" /> Download PDF
                 </button>
               </div>
             )}
