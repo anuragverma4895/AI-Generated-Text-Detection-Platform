@@ -1,90 +1,100 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { NAV_LINKS, SITE_NAME } from "@/lib/constants";
 import { ShieldCheck, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActiveLink = (href: string) => {
+    if (href.startsWith("/#")) return pathname === "/";
+    return pathname === href;
+  };
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-background/85 backdrop-blur-xl border-b border-border/50 py-3">
-      <div className="section-container flex items-center justify-between">
-        {/* Brand */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-shadow">
-            <ShieldCheck className="w-6 h-6 text-white" />
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/82 backdrop-blur-2xl">
+      <div className="section-container flex h-16 items-center justify-between gap-6">
+        <Link href="/" className="flex min-w-fit items-center gap-3 group" onClick={() => setMobileMenuOpen(false)}>
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-300/20 bg-white/[0.07] text-cyan-100 shadow-sm transition-colors group-hover:border-cyan-300/45 group-hover:bg-cyan-300/10">
+            <ShieldCheck className="h-5 w-5" />
           </div>
-          <span className="font-bold text-xl tracking-tight hidden sm:block">
+          <span className="hidden text-lg font-extrabold tracking-tight text-white sm:block">
             {SITE_NAME}
           </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
-          <ul className="flex items-center gap-6">
+        <nav className="hidden min-w-0 items-center gap-4 lg:flex">
+          <ul className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                  className={cn(
+                    "block rounded-full px-3 py-2 text-sm font-semibold text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white",
+                    isActiveLink(link.href) && "bg-white/[0.12] text-white"
+                  )}
                 >
                   {link.label}
                 </Link>
               </li>
             ))}
           </ul>
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="btn-primary py-2 px-5 text-sm">
-              Free Detector
-            </Link>
-          </div>
+          <Link href="/dashboard" className="btn-primary shrink-0 px-5 py-2 text-sm">
+            Free Detector
+          </Link>
         </nav>
 
-        {/* Mobile Nav Toggle */}
+        <Link href="/dashboard" className="btn-primary ml-auto hidden px-4 py-2 text-sm md:inline-flex lg:hidden">
+          Free Detector
+        </Link>
+
         <button
-          className="md:hidden p-2 text-muted-foreground hover:text-foreground"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-200 transition-colors hover:bg-white/10 lg:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Mobile Nav Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-b border-border bg-background/95 backdrop-blur-xl"
+            className="overflow-hidden border-t border-white/10 bg-slate-950/96 backdrop-blur-xl lg:hidden"
           >
-            <div className="section-container py-4 flex flex-col gap-4">
-              <ul className="flex flex-col gap-4">
+            <div className="section-container flex flex-col gap-2 py-4">
+              <ul className="grid gap-1">
                 {NAV_LINKS.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block text-base font-medium text-muted-foreground transition-colors hover:text-primary"
+                      className={cn(
+                        "block rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white",
+                        isActiveLink(link.href) && "bg-white/[0.12] text-white"
+                      )}
                     >
                       {link.label}
                     </Link>
                   </li>
                 ))}
               </ul>
-              <div className="flex flex-col gap-3 pt-4 border-t border-border/50">
-                <Link 
-                  href="/dashboard" 
-                  className="btn-primary w-full justify-center"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Free Detector
-                </Link>
-              </div>
+              <Link
+                href="/dashboard"
+                className="btn-primary mt-2 w-full justify-center"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Free Detector
+              </Link>
             </div>
           </motion.div>
         )}
