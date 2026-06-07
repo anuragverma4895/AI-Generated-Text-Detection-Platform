@@ -59,7 +59,7 @@ const itemVariants: Variants = {
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="section-spacing bg-bg-secondary relative">
+    <section id="features" className="section-spacing scroll-mt-20 bg-bg-secondary relative">
       <div className="section-container">
         <div className="text-center mb-16">
           <h2 className="section-title">Beyond Basic Detection</h2>

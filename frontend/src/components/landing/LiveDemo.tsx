@@ -42,7 +42,7 @@ export function LiveDemo() {
   };
 
   return (
-    <section id="demo" className="section-spacing relative overflow-hidden">
+    <section id="demo" className="section-spacing scroll-mt-20 relative overflow-hidden">
       <div className="section-container">
         <div className="text-center mb-12">
           <h2 className="section-title">Try It Live</h2>

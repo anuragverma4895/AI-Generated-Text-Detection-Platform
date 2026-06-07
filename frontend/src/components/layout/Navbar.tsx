@@ -4,21 +4,54 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_LINKS, SITE_NAME } from "@/lib/constants";
 import { ShieldCheck, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSectionHref, setActiveSectionHref] = useState("");
   const pathname = usePathname();
 
+  useEffect(() => {
+    if (pathname !== "/") {
+      return;
+    }
+
+    const sectionLinks = NAV_LINKS.filter((link) => link.href.startsWith("/#"));
+    const sectionIds = sectionLinks.map((link) => link.href.replace("/#", ""));
+
+    const updateActiveSection = () => {
+      let current: HTMLElement | null = null;
+
+      for (const id of sectionIds) {
+        const section = document.getElementById(id);
+        if (section && section.getBoundingClientRect().top <= 120) {
+          current = section;
+        }
+      }
+
+      setActiveSectionHref(current ? `/#${current.id}` : "");
+    };
+
+    const frame = window.requestAnimationFrame(updateActiveSection);
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    window.addEventListener("resize", updateActiveSection);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", updateActiveSection);
+      window.removeEventListener("resize", updateActiveSection);
+    };
+  }, [pathname]);
+
   const isActiveLink = (href: string) => {
-    if (href.startsWith("/#")) return pathname === "/";
+    if (href.startsWith("/#")) return pathname === "/" && activeSectionHref === href;
     return pathname === href;
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/82 backdrop-blur-2xl">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-slate-950/88 backdrop-blur-2xl">
       <div className="section-container flex h-16 items-center justify-between gap-5">
         <Link href="/" className="flex min-w-fit items-center gap-3 group" onClick={() => setMobileMenuOpen(false)}>
           <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-300/20 bg-white/[0.07] text-cyan-100 shadow-sm transition-colors group-hover:border-cyan-300/45 group-hover:bg-cyan-300/10">
