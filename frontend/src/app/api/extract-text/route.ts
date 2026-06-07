@@ -3,16 +3,79 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+class FileExtractionError extends Error {
+  constructor(message: string, public status = 400) {
+    super(message);
+    this.name = "FileExtractionError";
+  }
+}
+
+function normalizeExtractedText(text: string) {
+  return text
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .replace(/\u0000/g, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 async function extractPdfText(buffer: Buffer) {
-  const { PDFParse } = await import("pdf-parse");
-  const parser = new PDFParse({ data: buffer });
+  const errors: string[] = [];
 
   try {
-    const result = await parser.getText();
-    return result.text;
-  } finally {
-    await parser.destroy();
+    // pdf-parse 1.1.1 exports a function
+    const pdfParse = require("pdf-parse");
+    const result = await pdfParse(buffer);
+    const text = normalizeExtractedText(result.text || "");
+    if (text.length >= 50) return text;
+    errors.push("pdf-parse returned too little text");
+  } catch (error) {
+    errors.push(error instanceof Error ? error.message : "pdf-parse failed");
   }
+
+  try {
+    const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+    const loadingTask = pdfjs.getDocument({
+      data: new Uint8Array(buffer),
+      disableFontFace: true,
+      isEvalSupported: false,
+      useWorkerFetch: false,
+    });
+    const pdf = await loadingTask.promise;
+    const pages: string[] = [];
+
+    try {
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+        const page = await pdf.getPage(pageNumber);
+        const content = await page.getTextContent();
+        const pageText = content.items
+          .map((item) => ("str" in item ? item.str : ""))
+          .filter(Boolean)
+          .join(" ");
+        pages.push(pageText);
+        page.cleanup();
+      }
+    } finally {
+      await pdf.destroy();
+    }
+
+    const text = normalizeExtractedText(pages.join("\n\n"));
+    if (text.length >= 50) return text;
+    errors.push("PDF.js returned too little text");
+  } catch (error) {
+    errors.push(error instanceof Error ? error.message : "PDF.js fallback failed");
+  }
+
+  const diagnostic = errors.join(" | ").toLowerCase();
+
+  if (diagnostic.includes("password") || diagnostic.includes("encrypted")) {
+    throw new FileExtractionError("This PDF is password protected. Please upload an unlocked PDF, DOCX, or TXT file.");
+  }
+
+  throw new FileExtractionError(
+    "Could not extract readable text from this PDF. If it is a scanned/image-only PDF, convert it with OCR first or upload a DOCX/TXT version."
+  );
 }
 
 async function extractDocxText(buffer: Buffer) {
@@ -39,17 +102,7 @@ export async function POST(request: NextRequest) {
     if (fileName.endsWith(".txt") || mimeType === "text/plain") {
       text = buffer.toString("utf-8");
     } else if (fileName.endsWith(".pdf") || mimeType === "application/pdf") {
-      try {
-        text = await extractPdfText(buffer);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "";
-
-        if (message.toLowerCase().includes("password")) {
-          throw new Error("This PDF is password protected. Please upload an unlocked PDF, DOCX, or TXT file.");
-        }
-
-        throw new Error("Failed to read text from this PDF. Please try a text-based PDF, DOCX, or TXT file.");
-      }
+      text = await extractPdfText(buffer);
     } else if (
       fileName.endsWith(".docx") ||
       mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -66,10 +119,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Clean up extracted text (remove excessive newlines and whitespace)
-    text = text.replace(/\r\n/g, "\n");
-    text = text.replace(/\n{3,}/g, "\n\n");
-    text = text.trim();
+    text = normalizeExtractedText(text);
 
     if (text.length < 50) {
       return NextResponse.json(
@@ -86,6 +136,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ text, charCount: text.length });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to extract text from file";
-    return NextResponse.json({ error: message }, { status: 500 });
+    const status = error instanceof FileExtractionError ? error.status : 500;
+    return NextResponse.json({ error: message }, { status });
   }
 }
