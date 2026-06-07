@@ -11,9 +11,12 @@ export function LiveDemo() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progressText, setProgressText] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const trimmedTextLength = text.trim().length;
+  const hasText = trimmedTextLength > 0;
+  const hasRecommendedLength = trimmedTextLength >= 150;
 
   const handleAnalyze = async () => {
-    if (text.trim().length < 150) return;
+    if (!hasText) return;
     setIsAnalyzing(true);
     setResult(null);
     try {
@@ -47,7 +50,7 @@ export function LiveDemo() {
         <div className="text-center mb-12">
           <h2 className="section-title">Try It Live</h2>
           <p className="section-subtitle">
-            Paste any text below (min 150 characters) to see our detection engine in action.
+            Paste any text below to see the detector respond. Longer text gives a stronger analysis.
           </p>
         </div>
 
@@ -60,19 +63,23 @@ export function LiveDemo() {
               </label>
               <textarea
                 id="demo-input"
+                maxLength={5000}
                 className="w-full h-64 resize-none rounded-xl border border-cyan-300/10 bg-slate-950/70 p-4 text-sm leading-relaxed shadow-inner shadow-black/40 transition-all focus:border-cyan-300/40 focus:outline-none focus:ring-2 focus:ring-cyan-300/20"
                 placeholder="Paste an essay, article, or any text here..."
                 value={text}
                 onChange={(e) => setText(e.target.value)}
               />
               <div className="flex items-center justify-between">
-                <span className={cn("text-xs", text.length < 150 ? "text-amber-500" : "text-muted-foreground")}>
-                  {text.length} / 5,000 characters {text.length > 0 && text.length < 150 && "(Need 150+)"}
+                <span className={cn("text-xs", !hasRecommendedLength && hasText ? "text-amber-500" : "text-muted-foreground")}>
+                  {text.length} / 5,000 characters {hasText && !hasRecommendedLength && "(150+ required)"}
                 </span>
                 <button
                   onClick={handleAnalyze}
-                  disabled={isAnalyzing || text.trim().length < 150}
-                  className="btn-primary depth-button py-2 px-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isAnalyzing || !hasRecommendedLength}
+                  className={cn(
+                    "btn-primary depth-button py-2 px-6 transition-all",
+                    (!hasRecommendedLength || isAnalyzing) ? "opacity-50 cursor-not-allowed saturate-0" : "shadow-[0_0_28px_rgba(34,211,238,0.22)]"
+                  )}
                 >
                   {isAnalyzing ? (
                     <>
