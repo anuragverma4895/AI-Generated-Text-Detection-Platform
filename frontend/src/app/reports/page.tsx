@@ -7,6 +7,7 @@ import {
   getReports,
   deleteReport,
   clearReports,
+  exportReportAsPdf,
   exportReportAsJson,
   type SavedReport,
 } from "@/lib/report-store";
@@ -100,6 +101,9 @@ export default function ReportsPage() {
                     </td>
                     <td className="p-4 text-muted-foreground">{report.verdict}</td>
                     <td className="p-4 flex items-center justify-end gap-2">
+                      <button onClick={() => exportReportAsPdf(report)} className="p-2 hover:bg-primary/20 hover:text-primary rounded transition-colors" title="Export PDF">
+                        <FileText className="w-4 h-4" />
+                      </button>
                       <button onClick={() => exportReportAsJson(report)} className="p-2 hover:bg-primary/20 hover:text-primary rounded transition-colors" title="Download JSON">
                         <Download className="w-4 h-4" />
                       </button>

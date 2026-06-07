@@ -24,8 +24,8 @@ async function extractPdfText(buffer: Buffer) {
   const errors: string[] = [];
 
   try {
-    // pdf-parse 1.1.1 exports a function
-    const pdfParse = require("pdf-parse");
+    const pdfParseModule = await import("pdf-parse");
+    const pdfParse = pdfParseModule.default;
     const result = await pdfParse(buffer);
     const text = normalizeExtractedText(result.text || "");
     if (text.length >= 50) return text;

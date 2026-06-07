@@ -2,7 +2,12 @@
 
 import { useState, useRef } from "react";
 import { analyzeText, type AnalysisResult } from "@/lib/detection";
-import { saveReport } from "@/lib/report-store";
+import { exportReportAsPdf, saveReport, type SavedReport } from "@/lib/report-store";
+import {
+  getScoreLabel,
+  splitTextWithSentenceScores,
+  type ReportTextPart,
+} from "@/lib/report-format";
 import { 
   FileText, Upload, Link as LinkIcon, Loader2, ScanLine, 
   Download
@@ -26,22 +31,26 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<"text" | "file" | "url">("text");
   const [text, setText] = useState("");
   const [url, setUrl] = useState("");
+  const [sourceName, setSourceName] = useState("Pasted Text");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isFetchingUrl, setIsFetchingUrl] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [progressText, setProgressText] = useState("");
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [currentReport, setCurrentReport] = useState<SavedReport | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleAnalyze = async () => {
     if (text.trim().length < 150) return;
     setIsAnalyzing(true);
     setResult(null);
+    setCurrentReport(null);
     try {
       const res = await analyzeText(text, (msg) => setProgressText(msg));
       setResult(res);
       if (!res.error) {
-        saveReport(res, text, activeTab === "url" ? url : "Pasted Text");
+        const report = saveReport(res, text, sourceName || "Pasted Text");
+        setCurrentReport(report);
       }
     } catch (error) {
       console.error(error);
@@ -64,6 +73,7 @@ export default function Dashboard() {
       const data = await readApiResponse(res);
       if (!res.ok) throw new Error(data.error || "Failed to fetch URL");
       setText(data.text);
+      setSourceName(url.trim());
       setActiveTab("text");
       setProgressText("URL content extracted successfully.");
     } catch (err) {
@@ -100,6 +110,7 @@ export default function Dashboard() {
       if (!res.ok) throw new Error(data.error || "Failed to extract text");
 
       setText(data.text);
+      setSourceName(file.name);
       setActiveTab("text");
       setProgressText("File content extracted successfully.");
     } catch (error) {
@@ -113,7 +124,9 @@ export default function Dashboard() {
   };
 
   const handleExportPdf = () => {
-    window.print();
+    if (currentReport) {
+      exportReportAsPdf(currentReport);
+    }
   };
 
   const getVerdictColor = (prob: number) => {
@@ -122,6 +135,20 @@ export default function Dashboard() {
     if (prob > 30) return "text-yellow-500";
     return "text-emerald-500";
   };
+
+  const getReportTextClass = (part: ReportTextPart) => {
+    const probability = part.probability;
+    if (probability === null) return "text-muted-foreground";
+    if (probability > 75) return "bg-red-500/20 text-red-200 border-b-2 border-red-500/50";
+    if (probability > 50) return "bg-amber-500/20 text-amber-200 border-b-2 border-amber-500/50";
+    if (probability > 30) return "bg-yellow-500/20 text-yellow-200 border-b-2 border-yellow-500/50";
+    return "text-muted-foreground";
+  };
+
+  const highlightedReportText = result
+    ? splitTextWithSentenceScores(text, result.sentenceDetails)
+    : [];
+
   return (
     <div className="section-container py-12 flex-1">
       <div className="mb-8">
@@ -161,7 +188,10 @@ export default function Dashboard() {
                     className="w-full h-80 bg-background border border-border rounded-xl p-4 resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm leading-relaxed"
                     placeholder="Paste the text you want to analyze here... (Minimum 150 characters required)"
                     value={text}
-                    onChange={(e) => setText(e.target.value)}
+                    onChange={(e) => {
+                      setText(e.target.value);
+                      setSourceName("Pasted Text");
+                    }}
                   />
                   <div className="flex items-center justify-between">
                     <span className={cn("text-xs", text.length < 150 ? "text-amber-500" : "text-muted-foreground")}>
@@ -255,23 +285,16 @@ export default function Dashboard() {
                 <div className="flex items-center gap-2"><div className="w-3 h-3 rounded"></div> Human (&lt;30%)</div>
               </div>
 
-              <div className="bg-background/80 border border-border/50 rounded-xl p-6 text-sm leading-loose break-words max-h-[500px] overflow-y-auto custom-scrollbar">
-                {result.sentenceDetails.map((sentence, idx) => {
-                  let highlightClass = "";
-                  if (sentence.probability > 75) highlightClass = "bg-red-500/20 text-red-200 border-b-2 border-red-500/50";
-                  else if (sentence.probability > 50) highlightClass = "bg-amber-500/20 text-amber-200 border-b-2 border-amber-500/50";
-                  else if (sentence.probability > 30) highlightClass = "bg-yellow-500/20 text-yellow-200 border-b-2 border-yellow-500/50";
-                  else highlightClass = "text-muted-foreground";
-
-                  return (
-                    <span key={idx} className={cn("px-1 py-0.5 rounded-sm mx-0.5 inline-block mb-1 relative group cursor-help", highlightClass)}>
-                      {sentence.text}
-                      <span className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] py-1 px-2 rounded font-bold pointer-events-none whitespace-nowrap z-10 transition-opacity">
-                        {sentence.probability.toFixed(0)}% AI
-                      </span>
-                    </span>
-                  );
-                })}
+              <div className="bg-background/80 border border-border/50 rounded-xl p-6 text-sm leading-loose break-words whitespace-pre-wrap max-h-[500px] overflow-y-auto custom-scrollbar">
+                {highlightedReportText.map((part, idx) => (
+                  <span
+                    key={idx}
+                    className={cn("rounded-sm px-0.5", getReportTextClass(part))}
+                    title={getScoreLabel(part.probability)}
+                  >
+                    {part.text}
+                  </span>
+                ))}
               </div>
             </div>
           )}
@@ -329,7 +352,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 
-                <button onClick={handleExportPdf} className="btn-secondary w-full mt-8 text-sm">
+                <button onClick={handleExportPdf} disabled={!currentReport} className="btn-secondary w-full mt-8 text-sm">
                   <Download className="w-4 h-4" /> Export Report (PDF)
                 </button>
               </div>
