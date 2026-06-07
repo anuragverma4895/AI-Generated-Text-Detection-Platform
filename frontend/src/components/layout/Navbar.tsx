@@ -22,26 +22,34 @@ export function Navbar() {
     const sectionIds = sectionLinks.map((link) => link.href.replace("/#", ""));
 
     const updateActiveSection = () => {
-      let current: HTMLElement | null = null;
+      const headerOffset = 96;
+      let currentHref = "";
 
       for (const id of sectionIds) {
         const section = document.getElementById(id);
-        if (section && section.getBoundingClientRect().top <= 120) {
-          current = section;
+        if (!section) continue;
+
+        const bounds = section.getBoundingClientRect();
+        if (bounds.top <= headerOffset && bounds.bottom > headerOffset) {
+          currentHref = `/#${id}`;
         }
       }
 
-      setActiveSectionHref(current ? `/#${current.id}` : "");
+      setActiveSectionHref(currentHref);
     };
 
     const frame = window.requestAnimationFrame(updateActiveSection);
+    const delayedFrame = window.setTimeout(updateActiveSection, 250);
     window.addEventListener("scroll", updateActiveSection, { passive: true });
     window.addEventListener("resize", updateActiveSection);
+    window.addEventListener("hashchange", updateActiveSection);
 
     return () => {
       window.cancelAnimationFrame(frame);
+      window.clearTimeout(delayedFrame);
       window.removeEventListener("scroll", updateActiveSection);
       window.removeEventListener("resize", updateActiveSection);
+      window.removeEventListener("hashchange", updateActiveSection);
     };
   }, [pathname]);
 
@@ -62,15 +70,15 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden min-w-0 items-center gap-5 lg:flex">
-          <ul className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.035] p-1">
+        <nav className="hidden min-w-0 flex-1 items-center justify-end gap-5 lg:flex">
+          <ul className="flex min-w-0 items-center gap-1 rounded-full border border-white/10 bg-white/[0.035] p-1">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
                   className={cn(
                     "block rounded-full px-3.5 py-2 text-sm font-semibold text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white",
-                    isActiveLink(link.href) && "bg-white/[0.12] text-white"
+                    isActiveLink(link.href) && "bg-gradient-to-r from-cyan-400/20 to-violet-400/20 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]"
                   )}
                 >
                   {link.label}
@@ -109,7 +117,7 @@ export function Navbar() {
                       onClick={() => setMobileMenuOpen(false)}
                       className={cn(
                         "block rounded-xl px-3 py-3 text-sm font-semibold text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white",
-                        isActiveLink(link.href) && "bg-white/[0.12] text-white"
+                        isActiveLink(link.href) && "bg-gradient-to-r from-cyan-400/20 to-violet-400/20 text-white"
                       )}
                     >
                       {link.label}

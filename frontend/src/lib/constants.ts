@@ -9,10 +9,10 @@ export const EXTENSION_REPO_ZIP_URL =
   "https://github.com/anuragverma4895/AI-generated-text-detection/archive/refs/heads/main.zip";
 
 export const NAV_LINKS = [
+  { label: "Extension", href: "/extension" },
   { label: "Features", href: "/#features" },
   { label: "Live Demo", href: "/#demo" },
   { label: "Dashboard", href: "/dashboard" },
-  { label: "Extension", href: "/extension" },
   { label: "API Docs", href: "/api-docs" },
   { label: "Reports", href: "/reports" },
 ] as const;
